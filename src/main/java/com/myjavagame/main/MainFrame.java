@@ -1,4 +1,4 @@
-package com.myjavagame;
+package com.myjavagame.main;
 
 import javax.swing.JFrame;
 

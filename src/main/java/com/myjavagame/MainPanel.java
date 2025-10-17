@@ -16,6 +16,4 @@ public class MainPanel extends JPanel {
         setPreferredSize(new Dimension(screenWidth, screenHeight));
         setBackground(java.awt.Color.PINK);
     }
-
-    print
 }

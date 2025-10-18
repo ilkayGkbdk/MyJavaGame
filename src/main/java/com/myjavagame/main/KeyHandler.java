@@ -7,7 +7,8 @@ public class KeyHandler extends KeyAdapter {
 
     private MainPanel mp;
 
-    public boolean upPressed, downPressed, leftPressed, rightPressed;
+    public boolean upPressed = false, downPressed = false, leftPressed = false, rightPressed = false;
+    public boolean oPressed = false;
 
     public KeyHandler(MainPanel mp) {
         this.mp = mp;
@@ -29,6 +30,9 @@ public class KeyHandler extends KeyAdapter {
         if (code == KeyEvent.VK_D) {
             rightPressed = true;
         }
+        if (code == KeyEvent.VK_O) {
+            oPressed = true;
+        }
     }
 
     @Override
@@ -47,6 +51,9 @@ public class KeyHandler extends KeyAdapter {
         }
         if (code == KeyEvent.VK_D) {
             rightPressed = false;
+        }
+        if (code == KeyEvent.VK_O) {
+            oPressed = false;
         }
     }
 }

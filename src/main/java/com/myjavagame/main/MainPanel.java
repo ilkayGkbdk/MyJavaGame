@@ -3,6 +3,8 @@ package com.myjavagame.main;
 import javax.swing.JPanel;
 
 import com.myjavagame.entity.Player;
+import com.myjavagame.entity.base.Entity;
+import com.myjavagame.tile.TileManager;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -26,8 +28,14 @@ public class MainPanel extends JPanel implements Runnable {
     private int fps, ups;
     public int avgFPS, avgUPS;
 
-    public KeyHandler keyHandler = new KeyHandler(this);
+    public TileManager tileManager = new TileManager(this);
+    public CollisionChecker collisionChecker = new CollisionChecker(this);
 
+    public KeyHandler keyHandler = new KeyHandler(this);
+    public GifSpriteLoader gifSpriteLoader = new GifSpriteLoader();
+    public Debugger debugger = new Debugger(this);
+
+    public java.util.List<Entity> entityList = new java.util.ArrayList<Entity>();
     public Player player = new Player(this);
 
     public MainPanel() {
@@ -40,6 +48,8 @@ public class MainPanel extends JPanel implements Runnable {
 
     public void setupGame() {
         // Initialize game settings
+
+        player.loadSprites();
         player.setDefaultValues();
     }
 
@@ -69,14 +79,17 @@ public class MainPanel extends JPanel implements Runnable {
             accumulator += lastRenderTimeInSeconds;
             lastUpdate = currentTime;
 
+            // 'update' döngüsü (Fizik/Mantık)
             while (accumulator > updateRate) {
-                this.update();
-                repaint();
+                this.update(); // Sadece update'i çağır
                 accumulator -= updateRate;
                 ups++;
             }
 
+            // 'render' (Çizim)
+            repaint(); // repaint() buraya, dış döngüye taşındı!
             fps++;
+
             if (System.currentTimeMillis() > nextStatTime) {
                 avgFPS = fps;
                 avgUPS = ups;
@@ -97,7 +110,20 @@ public class MainPanel extends JPanel implements Runnable {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
 
-        // Draw player
-        player.draw(g2);
+        try {
+            // 1. Haritayı Çiz (EN ARKADA)
+            tileManager.draw(g2);
+
+            // 2. Oyuncuyu Çiz (HARİTANIN ÜSTÜNDE)
+            player.draw(g2);
+
+            // 3. Debug vb. Çiz (EN ÖNDE)
+            if (keyHandler.oPressed) {
+                debugger.drawHitsBoxes(g2);
+            }
+        } finally {
+            // g2.dispose() her zaman çağrılmalı, hata olsa bile
+            g2.dispose();
+        }
     }
 }
